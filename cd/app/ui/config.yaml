@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chess-ui
+  namespace: chess-with-actors
+data:
+  app.config.json: |
+    {
+      "apiUrl": "http://chess.localhost"
+    }

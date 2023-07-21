@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: chess-with-actors
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chess-api
+  template:
+    metadata:
+      labels:
+        app: chess-api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: chess-cluster
+      containers:
+        - name: api
+          image: aaronjamesford/chess-api:main-51 # {"$imagepolicy": "flux-system:chess-api"}
+          resources:
+            limits:
+              memory: "500Mi"
+              cpu: "500m"
+            requests:
+              memory: "200Mi"
+              cpu: "200m"
+          ports:
+            - name: http
+              containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: "/metrics"
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: "/metrics"
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          env:
+            - name: ProtoActor__AdvertisedHost
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP

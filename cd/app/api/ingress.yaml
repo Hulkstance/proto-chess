@@ -1,0 +1,24 @@
+---
+apiVersion: traefik.containo.us/v1alpha1  
+kind: IngressRoute  
+metadata:  
+  name: chess-api
+  namespace: chess-with-actors
+spec:  
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`chess.localhost`) && PathPrefix(`/hubs`)
+    kind: Rule
+    services:
+    - name: chess-api
+      port: 80
+      sticky:
+        cookie:
+          httpOnly: true
+          name: peskybird
+  - match: Host(`chess.localhost`) && PathPrefix(`/api`)
+    kind: Rule
+    services:
+    - name: chess-api
+      port: 80

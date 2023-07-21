@@ -1,0 +1,16 @@
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div class="toast-container p-3 top-0 end-0">
+        <ngb-toast *ngFor="let toast of notifs.notifications"
+                    [autohide]="toast.options.autohide"
+                    [class]="toast.options.class"
+                    (hidden)="notifs.dismiss(toast)">
+            
+            <ng-template ngbToastHeader>
+                <strong class="me-auto">{{ toast.title }}</strong>
+                <small *ngIf="!toast.options.autohide">{{ toast.timeLabel }}</small>
+            </ng-template>
+            
+            {{ toast.body }}
+        </ngb-toast>
+    </div>
+</div>
